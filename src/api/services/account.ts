@@ -17,6 +17,6 @@ export type AccountResponse = {
 };
 
 export const getAccounts = async () => {
-  const result = await apiClient.get<ResponseData<AccountResponse>, ResponseData<AccountResponse>>('/accounts');
+  const result = await apiClient.get<AccountResponse, ResponseData<AccountResponse>>('/accounts');
   return result;
 };

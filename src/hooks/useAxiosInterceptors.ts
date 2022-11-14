@@ -1,6 +1,6 @@
-import { apiClient } from '@api/index';
-import { AxiosError, AxiosResponse } from 'axios';
 import { useRouter } from 'next/router';
+import type { AxiosError, AxiosResponse } from 'axios';
+import { apiClient } from '@api/index';
 
 function useAxiosInterceptors() {
   const router = useRouter();
@@ -19,7 +19,6 @@ function useAxiosInterceptors() {
       if (error?.code === 'ERR_NETWORK') {
         alert('서버와의 연결이 끊어졌습니다!');
         router.reload();
-        return;
       }
 
       if (!error?.response) {
@@ -28,8 +27,8 @@ function useAxiosInterceptors() {
 
       const { status }: AxiosResponse = error.response;
       if (status === 401 && router.pathname !== '/login') {
+        alert('세션이 만료되었습니다!');
         router.push('/login');
-        return;
       }
 
       return { error: error.response };

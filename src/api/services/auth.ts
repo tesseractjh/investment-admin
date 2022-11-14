@@ -17,8 +17,6 @@ export const login = async (formData: LoginRequest) => {
 };
 
 export const auth = async () => {
-  const {
-    data: { error },
-  } = await apiClient.get<ResponseData<unknown>>('/users');
+  const { error } = await apiClient.get<unknown, ResponseData<unknown>>('/users');
   return !error;
 };
