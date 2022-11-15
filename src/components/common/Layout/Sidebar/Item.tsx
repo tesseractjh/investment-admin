@@ -12,7 +12,7 @@ type Props = {
 function Item({ url, name, icon, isSelected }: Props) {
   return (
     <Container>
-      <Link href={url}>
+      <Link href={url} passHref>
         <Anchor isSelected={isSelected}>
           {icon}
           <ItemName>{name}</ItemName>
