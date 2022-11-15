@@ -29,7 +29,7 @@ export default function Layout({ children }: Props) {
 
 const Container = styled.div`
   display: flex;
-  width: 100vw;
+  overflow: hidden;
   height: 100vh;
 `;
 
@@ -40,9 +40,11 @@ const FlexColumn = styled.div`
 
 const Header = styled.header`
   ${({ theme }) => theme.mixin.flex('flex-start')}
+  z-index: 10;
   height: 60px;
   padding: 20px 30px;
   background-color: ${({ theme }) => theme.color.WHITE};
+  box-shadow: 0 6px 10px rgb(0 0 0 / 17%);
   font-weight: 700;
   font-size: 20px;
 
@@ -54,12 +56,15 @@ const Header = styled.header`
 `;
 
 const ScrollWrapper = styled.div`
+  overflow-x: auto;
   overflow-y: auto;
+  width: calc(100vw - 240px);
   height: calc(100vh - 60px);
 `;
 
 const Section = styled.section`
   min-height: calc(100vh - 120px);
+  padding: 36px 18px;
 `;
 
 const Footer = styled.footer`
