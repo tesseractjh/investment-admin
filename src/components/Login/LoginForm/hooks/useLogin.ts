@@ -1,6 +1,7 @@
 import { useRouter } from 'next/router';
 import { useCallback, useState } from 'react';
 import API from '@api/index';
+import useModal from '@hooks/useModal';
 
 const ERROR_MSG = {
   invalidInputEmail: '아이디는 이메일 형식으로 입력해야 합니다!',
@@ -25,24 +26,25 @@ export default function useLogin() {
   const [userId, setUserId] = useState('');
   const [password, setPassword] = useState('');
   const router = useRouter();
+  const openModal = useModal();
 
   const handleIdChange = useCallback(handleChange(setUserId), []);
   const handlePasswordChange = useCallback(handleChange(setPassword), []);
   const handleLogin = async () => {
     if (!userId.match(EMAIL_REGEX)) {
-      alert(ERROR_MSG.invalidInputEmail);
+      openModal(ERROR_MSG.invalidInputEmail);
       return;
     }
 
     if (password.length < 4) {
-      alert(ERROR_MSG.invalidInputPassword);
+      openModal(ERROR_MSG.invalidInputPassword);
       return;
     }
 
     const { data, error } = await API.auth.login({ email: userId, password });
 
     if (error?.data === SERVER_ERROR_MSG.userNotFound || error?.data === SERVER_ERROR_MSG.incorretPassword) {
-      alert(ERROR_MSG.userNotFound);
+      openModal(ERROR_MSG.userNotFound);
       return;
     }
 

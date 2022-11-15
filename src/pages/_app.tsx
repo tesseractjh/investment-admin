@@ -5,6 +5,7 @@ import GlobalStyle from '@styles/GlobalStyles';
 import theme from '@styles/theme';
 import '@styles/globals.css';
 import useAxiosInterceptors from '@hooks/useAxiosInterceptors';
+import ModalProvider from 'src/contexts/ModalProvider';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -16,14 +17,21 @@ const queryClient = new QueryClient({
 });
 
 export default function App({ Component, pageProps }: AppProps) {
-  useAxiosInterceptors();
-
   return (
     <ThemeProvider theme={theme}>
       <GlobalStyle />
       <QueryClientProvider client={queryClient}>
-        <Component {...pageProps} />
+        <ModalProvider>
+          <AxiosWrapper>
+            <Component {...pageProps} />
+          </AxiosWrapper>
+        </ModalProvider>
       </QueryClientProvider>
     </ThemeProvider>
   );
+}
+
+function AxiosWrapper({ children }: { children: React.ReactNode }) {
+  useAxiosInterceptors();
+  return <>{children}</>;
 }
