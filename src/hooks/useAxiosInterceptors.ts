@@ -28,7 +28,12 @@ function useAxiosInterceptors() {
 
       const { status }: AxiosResponse = error.response;
       if (status === 401 && router.pathname !== '/login') {
-        openModal('세션이 만료되었습니다!', { onUnmount: () => router.push('/login') });
+        openModal('세션이 만료되었습니다!', {
+          onUnmount: () => {
+            window.localStorage.removeItem('accessToken');
+            router.push('/login');
+          },
+        });
       }
 
       return { error: error.response };
