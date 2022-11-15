@@ -23,7 +23,13 @@ export default function ModalProvider({ children }: Props) {
   const fadeOutTimer = useRef<NodeJS.Timeout | null>(null);
 
   const openModal: ModalContextValue = useCallback((message, { onUnmount, duration = 3000 } = {}) => {
-    setIsOpen(true);
+    setIsOpen((prev) => {
+      if (prev) {
+        setTimeout(() => setIsOpen(true), 0);
+        return false;
+      }
+      return true;
+    });
     setMessage(message);
 
     if (closingTimer.current) {
