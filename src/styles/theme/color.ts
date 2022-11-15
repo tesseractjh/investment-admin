@@ -9,6 +9,7 @@ const color = {
   SECONDARY: '#468ff7',
   TERTIARY: '#6642ff',
   ACCENT: '#ec5b56',
+  LOGO: '#0f253c',
 };
 
 export default color;
