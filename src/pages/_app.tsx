@@ -6,6 +6,12 @@ import theme from '@styles/theme';
 import '@styles/globals.css';
 import useAxiosInterceptors from '@hooks/useAxiosInterceptors';
 import ModalProvider from 'src/contexts/ModalProvider';
+import { useRouter } from 'next/router';
+import Layout from '@components/common/Layout';
+
+type Props = {
+  children: React.ReactNode;
+};
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -23,7 +29,9 @@ export default function App({ Component, pageProps }: AppProps) {
       <QueryClientProvider client={queryClient}>
         <ModalProvider>
           <AxiosWrapper>
-            <Component {...pageProps} />
+            <LayoutWrapper>
+              <Component {...pageProps} />
+            </LayoutWrapper>
           </AxiosWrapper>
         </ModalProvider>
       </QueryClientProvider>
@@ -31,7 +39,15 @@ export default function App({ Component, pageProps }: AppProps) {
   );
 }
 
-function AxiosWrapper({ children }: { children: React.ReactNode }) {
+function AxiosWrapper({ children }: Props) {
   useAxiosInterceptors();
   return <>{children}</>;
+}
+
+function LayoutWrapper({ children }: Props) {
+  const { pathname } = useRouter();
+  if (pathname === '/login') {
+    return <>{children}</>;
+  }
+  return <Layout>{children}</Layout>;
 }
