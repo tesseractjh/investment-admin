@@ -1,5 +1,12 @@
+import type { GetServerSideProps } from 'next';
+import API, { ResponseData, serverAPI } from '@api/index';
+import type { AccountResponse } from '@api/services/account';
 import Table from '@components/common/Table';
 import useAccounts from '@hooks/useAccounts';
+
+type Props = {
+  initialData: [ResponseData<AccountResponse[]>, ResponseData<AccountResponse[]>];
+};
 
 const columnStyles: React.ComponentProps<typeof Table>['columnStyles'] = [
   { width: 11, color: 'SECONDARY' },
@@ -15,8 +22,8 @@ const columnStyles: React.ComponentProps<typeof Table>['columnStyles'] = [
 
 const TABLE_LIMIT = 20;
 
-export default function Accounts() {
-  const { data, columns, isReady } = useAccounts(TABLE_LIMIT);
+export default function Accounts({ initialData }: Props) {
+  const { data, columns, isReady } = useAccounts(initialData ?? '', TABLE_LIMIT);
 
   if (!isReady) {
     return null;
@@ -34,3 +41,38 @@ export default function Accounts() {
     />
   );
 }
+
+export const getServerSideProps: GetServerSideProps = async (ctx) => {
+  const { accessToken } = ctx.req.cookies;
+  const { page = 1, limit = 20 } = ctx.query;
+
+  serverAPI.interceptors.request.use((config) => {
+    if (config.headers) {
+      config.headers.Authorization = `Bearer ${accessToken}`;
+    }
+    return config;
+  });
+
+  const results = await Promise.all([
+    API.account.getAccounts({ page, limit }),
+    API.account.getAccounts({ page: Number(page) + 1, limit }),
+  ]);
+
+  if (results.some(({ error }) => error?.status === 401)) {
+    ctx.res.setHeader('Set-Cookie', 'accessToken=; max-age=0');
+    return {
+      redirect: {
+        destination: '/login?expired=true',
+      },
+      props: {
+        hi: 1234,
+      },
+    };
+  }
+
+  return {
+    props: {
+      initialData: results.map(({ data }) => ({ data })),
+    },
+  };
+};

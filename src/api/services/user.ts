@@ -1,4 +1,4 @@
-import { apiClient } from '..';
+import { getAPI } from '..';
 import type { ResponseData } from '..';
 
 export type UserResponse = {
@@ -19,6 +19,6 @@ export type UserResponse = {
 };
 
 export const getUsers = async () => {
-  const result = await apiClient.get<UserResponse[], ResponseData<UserResponse[]>>('/users');
+  const result = await getAPI().get<UserResponse[], ResponseData<UserResponse[]>>('/users');
   return result;
 };

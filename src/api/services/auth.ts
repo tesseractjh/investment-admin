@@ -1,4 +1,4 @@
-import { apiClient } from '..';
+import { getAPI } from '..';
 import type { ResponseData } from '..';
 
 type LoginRequest = {
@@ -12,11 +12,11 @@ export type LoginResponse = {
 };
 
 export const login = async (formData: LoginRequest) => {
-  const result = await apiClient.post<LoginResponse, ResponseData<LoginResponse>>('/login', formData);
+  const result = await getAPI().post<LoginResponse, ResponseData<LoginResponse>>('/login', formData);
   return result;
 };
 
 export const auth = async () => {
-  const { error } = await apiClient.get<unknown, ResponseData<unknown>>('/users');
+  const { error } = await getAPI().get<unknown, ResponseData<unknown>>('/users');
   return !error;
 };

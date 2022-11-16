@@ -1,9 +1,10 @@
 import { useQueryClient } from '@tanstack/react-query';
+import { deleteCookie } from '@utils/cookie';
 
 export default function useLogout() {
   const queryClient = useQueryClient();
   const handleLogout = () => {
-    window.localStorage.removeItem('accessToken');
+    deleteCookie('accessToken');
     queryClient.clear();
   };
 

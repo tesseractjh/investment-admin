@@ -1,7 +1,7 @@
 import { BROKERS } from '@constants/brokers';
 import { ACCOUNT_STATE } from '@constants/accounts';
 import getQueryString from '@utils/getQueryString';
-import { apiClient } from '..';
+import { getAPI } from '..';
 import type { ResponseData } from '..';
 
 export type AccountResponse = {
@@ -49,7 +49,7 @@ const converter = (key: string) => {
 };
 
 export const getAccounts = async (params: Record<string, unknown>) => {
-  const result = await apiClient.get<AccountResponse[], ResponseData<AccountResponse[]>>(
+  const result = await getAPI().get<AccountResponse[], ResponseData<AccountResponse[]>>(
     `/accounts?${getQueryString({ ...params, _expand: 'user' }, converter)}`
   );
   return result;

@@ -1,21 +1,22 @@
 import { useRouter } from 'next/router';
 import type { AxiosError, AxiosResponse } from 'axios';
-import { apiClient } from '@api/index';
+import { clientAPI } from '@api/index';
+import { getCookie, setCookie } from '@utils/cookie';
 import useModal from './useModal';
 
 function useAxiosInterceptors() {
   const router = useRouter();
   const openModal = useModal();
 
-  apiClient.interceptors.request.use((config) => {
-    const accessToken = window.localStorage.getItem('accessToken');
+  clientAPI.interceptors.request.use((config) => {
+    const accessToken = getCookie('accessToken');
     if (config.headers && accessToken) {
       config.headers.Authorization = `Bearer ${accessToken}`;
     }
     return config;
   });
 
-  apiClient.interceptors.response.use(
+  clientAPI.interceptors.response.use(
     (res) => res,
     (error: AxiosError) => {
       if (error?.code === 'ERR_NETWORK') {
@@ -31,7 +32,7 @@ function useAxiosInterceptors() {
         openModal('세션이 만료되었습니다!', {
           duration: 1500,
           onUnmount: () => {
-            window.localStorage.removeItem('accessToken');
+            setCookie('accessToken', '', 0);
             router.push('/login');
           },
         });

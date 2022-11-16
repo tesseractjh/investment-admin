@@ -8,7 +8,6 @@ import useAxiosInterceptors from '@hooks/useAxiosInterceptors';
 import ModalProvider from 'src/contexts/ModalProvider';
 import Layout from '@components/common/Layout';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
-import { RecoilRoot } from 'recoil';
 
 type Props = {
   children: React.ReactNode;
@@ -28,15 +27,13 @@ export default function App({ Component, pageProps }: AppProps) {
     <ThemeProvider theme={theme}>
       <GlobalStyle />
       <QueryClientProvider client={queryClient}>
-        <RecoilRoot>
-          <ModalProvider>
-            <AxiosWrapper>
-              <Layout>
-                <Component {...pageProps} />
-              </Layout>
-            </AxiosWrapper>
-          </ModalProvider>
-        </RecoilRoot>
+        <ModalProvider>
+          <AxiosWrapper>
+            <Layout>
+              <Component {...pageProps} />
+            </Layout>
+          </AxiosWrapper>
+        </ModalProvider>
         <ReactQueryDevtools />
       </QueryClientProvider>
     </ThemeProvider>

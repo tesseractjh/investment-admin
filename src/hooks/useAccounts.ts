@@ -3,10 +3,15 @@ import getFormattedAccount from '@utils/getFormattedAccount';
 import getFormattedValue from '@utils/getFormattedValue';
 import getFormattedDate from '@utils/getFormattedDate';
 import { BROKERS, BROKER_FORMAT } from '@constants/brokers';
+import type { ResponseData } from '@api/index';
+import type { AccountResponse } from '@api/services/account';
 import useAccountsQueries from './queries/useAccountsQueries';
 
-export default function useAccounts(limit: number) {
-  const results = useAccountsQueries(limit);
+export default function useAccounts(
+  initialData: [ResponseData<AccountResponse[]>, ResponseData<AccountResponse[]>],
+  limit: number
+) {
+  const results = useAccountsQueries(initialData, limit);
   const defaultValues = { data: [], columns: ACCOUNTS_COLUMNS, isReady: false };
 
   if (results.some((result) => !result)) {

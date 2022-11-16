@@ -3,6 +3,7 @@ import { useCallback, useState } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import API from '@api/index';
 import useModal from '@hooks/useModal';
+import { setCookie } from '@utils/cookie';
 
 const ERROR_MSG = {
   invalidInputEmail: '아이디는 이메일 형식으로 입력해야 합니다!',
@@ -51,7 +52,7 @@ export default function useLogin() {
     }
 
     if (data.accessToken) {
-      window.localStorage.setItem('accessToken', data.accessToken);
+      setCookie('accessToken', data.accessToken);
       queryClient.clear();
       router.push('/');
     }
