@@ -1,5 +1,6 @@
 import { useRouter } from 'next/router';
 import { useCallback, useState } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
 import API from '@api/index';
 import useModal from '@hooks/useModal';
 
@@ -27,6 +28,7 @@ export default function useLogin() {
   const [password, setPassword] = useState('');
   const router = useRouter();
   const openModal = useModal();
+  const queryClient = useQueryClient();
 
   const handleIdChange = useCallback(handleChange(setUserId), []);
   const handlePasswordChange = useCallback(handleChange(setPassword), []);
@@ -50,6 +52,7 @@ export default function useLogin() {
 
     if (data.accessToken) {
       window.localStorage.setItem('accessToken', data.accessToken);
+      queryClient.clear();
       router.push('/');
     }
   };
