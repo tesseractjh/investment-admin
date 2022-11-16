@@ -18,7 +18,9 @@ export type AccountResponse = {
   updated_at: string;
 };
 
-export const getAccounts = async () => {
-  const result = await apiClient.get<AccountResponse[], ResponseData<AccountResponse[]>>('/accounts');
+export const getAccounts = async (page: number, limit: number) => {
+  const result = await apiClient.get<AccountResponse[], ResponseData<AccountResponse[]>>(
+    `/accounts?_page=${page}&_limit=${limit}`
+  );
   return result;
 };

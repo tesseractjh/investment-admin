@@ -2,27 +2,35 @@ import Table from '@components/common/Table';
 import useAccounts from '@hooks/useAccounts';
 
 const columnStyles: React.ComponentProps<typeof Table>['columnStyles'] = [
-  { width: 9, color: 'SECONDARY' },
-  { width: 9 },
-  { width: 12, align: 'right', color: 'SECONDARY' },
-  { width: 9 },
+  { width: 11, color: 'SECONDARY' },
   { width: 10 },
-  { width: 10, align: 'right' },
-  { width: 10, align: 'right' },
+  { width: 13, color: 'SECONDARY' },
   { width: 9 },
-  { width: 12 },
+  { width: 13 },
+  { width: 11 },
+  { width: 11 },
+  { width: 9 },
+  { width: 13 },
 ];
 
-export default function Accounts() {
-  const { data, columns, isReady } = useAccounts();
+const TABLE_LIMIT = 20;
 
-  if (!isReady || !columns || !data) {
+export default function Accounts() {
+  const { data, columns, isReady } = useAccounts(TABLE_LIMIT);
+
+  if (!isReady) {
     return null;
   }
 
   return (
-    <>
-      <Table columns={columns} data={data} width={1600} columnStyles={columnStyles} />
-    </>
+    <Table
+      tableId="accounts"
+      columns={columns}
+      data={data}
+      limit={TABLE_LIMIT}
+      minWidth={1500}
+      maxWidth={2000}
+      columnStyles={columnStyles}
+    />
   );
 }

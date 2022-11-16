@@ -62,6 +62,21 @@ const GlobalStyle = createGlobalStyle`
     background-color: ${({ theme }) => theme.color.BACKGROUND};
   }
 
+  *::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  *::-webkit-scrollbar-thumb {
+    width: 5px;
+    border-radius: 8px;
+    background-color: ${({ theme }) => theme.color.GRAY};
+  }
+
+  *::-webkit-scrollbar-track {
+    background-color: ${({ theme }) => theme.color.BORDER};
+  }
+
   a {
     color: inherit;
     text-decoration: none;

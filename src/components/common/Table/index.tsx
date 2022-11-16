@@ -1,60 +1,89 @@
 import theme from '@styles/theme';
-import type { CSSProperties } from 'styled-components';
 import styled from 'styled-components';
+import Pagination from './Pagination';
 import useTable from './hooks/useTable';
 
 type ColumnStyle = {
   width?: number;
-  align?: CSSProperties['textAlign'];
   color?: keyof typeof theme['color'];
 };
 
 type Props<T> = {
+  tableId: string;
   columns: Record<string, string>;
   data: T[];
-  width?: number;
+  limit: number;
+  minWidth?: number;
+  maxWidth?: number;
   columnStyles?: ColumnStyle[];
 };
 
 export default function Table<T extends Record<string, string | number>>({
+  tableId,
   columns,
   data,
-  width,
+  limit,
+  minWidth,
+  maxWidth,
   columnStyles,
 }: Props<T>) {
   const [heads, rows] = useTable(columns, data);
 
   return (
-    <Container $width={width}>
-      <thead>
-        <Row>
-          {heads.map((head, index) => (
-            <Head key={head} columnStyle={columnStyles?.[index]}>
-              {head}
-            </Head>
-          ))}
-        </Row>
-      </thead>
-      <tbody>
-        {rows.map(({ id, datas }) => (
-          <Row key={id}>
-            {datas.map((data, index) => (
-              <Data key={data} columnStyle={columnStyles?.[index]}>
-                {data}
-              </Data>
+    <Container>
+      <TableMenuContainer>
+        필터
+        <Pagination tableId={tableId} limit={limit} />
+      </TableMenuContainer>
+      <TableWrapper>
+        <StyledTable minWidth={minWidth} maxWidth={maxWidth}>
+          <thead>
+            <Row>
+              {heads.map((head, index) => (
+                <Head key={head} columnStyle={columnStyles?.[index]}>
+                  {head}
+                </Head>
+              ))}
+            </Row>
+          </thead>
+          <tbody>
+            {rows.map(({ id, datas }) => (
+              <Row key={id}>
+                {datas.map((data, index) => (
+                  <Data key={data} columnStyle={columnStyles?.[index]}>
+                    {data}
+                  </Data>
+                ))}
+              </Row>
             ))}
-          </Row>
-        ))}
-      </tbody>
+          </tbody>
+        </StyledTable>
+      </TableWrapper>
     </Container>
   );
 }
 
-const Container = styled.table<{ $width?: number }>`
-  ${({ $width }) => ($width ? `width: ${$width}px;` : '')}
-  min-width: 100%;
-  border-collapse: collapse;
+const Container = styled.div``;
+
+const TableMenuContainer = styled.div`
+  ${({ theme }) => theme.mixin.flex('space-between')}
+  padding: 10px 20px;
+  margin-bottom: 10px;
+  border: 1px solid ${({ theme }) => theme.color.BORDER};
+  background-color: ${({ theme }) => theme.color.WHITE};
+`;
+
+const TableWrapper = styled.div`
+  overflow-x: auto;
   box-shadow: 0 7px 20px rgb(0 0 0 / 17%);
+`;
+
+const StyledTable = styled.table<{ minWidth?: number; maxWidth?: number }>`
+  ${({ minWidth }) => (minWidth ? `min-width: ${minWidth}px;` : '')}
+  ${({ maxWidth }) => (maxWidth ? `max-width: ${maxWidth}px;` : '')}
+  width: 100%;
+  border-collapse: collapse;
+  margin: 0 auto;
 `;
 
 const Row = styled.tr`
@@ -71,6 +100,7 @@ const Head = styled.th<{ columnStyle?: ColumnStyle }>`
   background-color: ${({ theme }) => theme.color.BACKGROUND};
   font-weight: 700;
   text-align: center;
+  word-break: keep-all;
   ${({ columnStyle }) =>
     columnStyle
       ? `
@@ -82,12 +112,11 @@ const Head = styled.th<{ columnStyle?: ColumnStyle }>`
 const Data = styled.td<{ columnStyle?: ColumnStyle }>`
   border: 1px solid ${({ theme }) => theme.color.BORDER};
   background-color: ${({ theme }) => theme.color.WHITE};
-  text-align: center;
+  text-align: right;
   ${({ columnStyle, theme }) =>
     columnStyle
       ? `
         ${columnStyle.width ? `width: ${columnStyle.width}%;` : ''}
-        ${columnStyle.align ? `text-align: ${columnStyle.align};` : ''}
         ${columnStyle.color ? `color: ${theme.color[columnStyle.color]}; font-weight: 700;` : ''}
       `
       : ''}

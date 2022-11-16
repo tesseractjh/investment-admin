@@ -1,16 +1,19 @@
 import { useQueries } from '@tanstack/react-query';
+import { useRecoilValue } from 'recoil';
 import API from '@api/index';
 import { ACCOUNTS_COLUMNS, ACCOUNT_STATE } from '@constants/accounts';
 import getFormattedAccount from '@utils/getFormattedAccount';
 import getFormattedValue from '@utils/getFormattedValue';
 import getFormattedDate from '@utils/getFormattedDate';
 import { BROKERS, BROKER_FORMAT } from '@constants/brokers';
+import { tablePageState } from '@recoil/table';
 
-const accountsQuery = {
-  queryKey: ['accounts'],
-  queryFn: API.account.getAccounts,
+const accountsQuery = (page: number, limit: number) => ({
+  queryKey: ['accounts', { page, limit }],
+  queryFn: () => API.account.getAccounts(page, limit),
   staleTime: 3 * 60 * 1000,
-};
+  keepPreviousData: true,
+});
 
 const usersQuery = {
   queryKey: ['users'],
@@ -18,13 +21,15 @@ const usersQuery = {
   staleTime: 3 * 60 * 1000,
 };
 
-export default function useAccounts() {
+export default function useAccounts(limit: number) {
+  const page = useRecoilValue(tablePageState('accounts'));
   const results = useQueries({
-    queries: [accountsQuery, usersQuery],
+    queries: [accountsQuery(page, limit), usersQuery, accountsQuery(page + 1, limit)],
   });
+  const defaultValues = { data: [], columns: ACCOUNTS_COLUMNS, isReady: false };
 
   if (results.some((result) => !result)) {
-    return { isReady: false };
+    return defaultValues;
   }
 
   const isLoading = results.some(({ isLoading }) => isLoading);
@@ -32,7 +37,7 @@ export default function useAccounts() {
   const [{ data: accountsData }, { data: usersData }] = results;
 
   if (!accountsData || !usersData) {
-    return { isReady: false };
+    return defaultValues;
   }
 
   const { data: accounts = [] } = accountsData;
@@ -47,7 +52,7 @@ export default function useAccounts() {
     row.name = account.name;
     row.assets = getFormattedValue(account.assets);
     row.payments = getFormattedValue(account.payments);
-    row.is_active = account.is_active ? '활성상태' : '비활성상태';
+    row.is_active = account.is_active ? '활성' : '비활성';
     row.created_at = getFormattedDate(account.created_at);
     return row;
   });
