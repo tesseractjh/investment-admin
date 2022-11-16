@@ -1,12 +1,17 @@
 import { useState, useEffect } from 'react';
 
-function useMount(callback: () => void, ...deps: unknown[]) {
+function useMount(callback?: () => void, deps: unknown[] = []) {
   const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
     setIsMounted(true);
-    callback();
-  }, deps);
+  }, []);
+
+  useEffect(() => {
+    if (isMounted) {
+      callback?.();
+    }
+  }, [isMounted, ...deps]);
 
   return isMounted;
 }
