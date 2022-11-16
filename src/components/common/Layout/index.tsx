@@ -10,6 +10,10 @@ type Props = {
 export default function Layout({ children }: Props) {
   const headerName = useHeader();
 
+  if (!headerName) {
+    return <>{children}</>;
+  }
+
   return (
     <Container>
       <Sidebar />
