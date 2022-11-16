@@ -1,31 +1,12 @@
-import { useQueries } from '@tanstack/react-query';
-import { useRecoilValue } from 'recoil';
-import API from '@api/index';
 import { ACCOUNTS_COLUMNS, ACCOUNT_STATE } from '@constants/accounts';
 import getFormattedAccount from '@utils/getFormattedAccount';
 import getFormattedValue from '@utils/getFormattedValue';
 import getFormattedDate from '@utils/getFormattedDate';
 import { BROKERS, BROKER_FORMAT } from '@constants/brokers';
-import { tablePageState } from '@recoil/table';
-
-const accountsQuery = (page: number, limit: number) => ({
-  queryKey: ['accounts', { page, limit }],
-  queryFn: () => API.account.getAccounts(page, limit),
-  staleTime: 3 * 60 * 1000,
-  keepPreviousData: true,
-});
-
-const usersQuery = {
-  queryKey: ['users'],
-  queryFn: API.user.getUsers,
-  staleTime: 3 * 60 * 1000,
-};
+import useAccountsQueries from './queries/useAccountsQueries';
 
 export default function useAccounts(limit: number) {
-  const page = useRecoilValue(tablePageState('accounts'));
-  const results = useQueries({
-    queries: [accountsQuery(page, limit), usersQuery, accountsQuery(page + 1, limit)],
-  });
+  const results = useAccountsQueries(limit);
   const defaultValues = { data: [], columns: ACCOUNTS_COLUMNS, isReady: false };
 
   if (results.some((result) => !result)) {
