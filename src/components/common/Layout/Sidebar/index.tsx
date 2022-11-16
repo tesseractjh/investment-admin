@@ -1,10 +1,10 @@
 import styled from 'styled-components';
 import Logo from '../../Logo';
 import useSidebar from '../hooks/useSidebar';
-import Item from './Item';
+import MenuItem from './MenuItem';
 
 export default function Sidebar() {
-  const { getIsSelected, menu } = useSidebar();
+  const { getIsSelected, menus } = useSidebar();
 
   return (
     <Container>
@@ -13,8 +13,8 @@ export default function Sidebar() {
         <LogoText>PREFACE</LogoText>
       </LogoWrapper>
       <List>
-        {menu.map(({ url, name, icon: Icon }) => (
-          <Item key={name} url={url} name={name} icon={<Icon />} isSelected={getIsSelected(url)} />
+        {menus.map((menu) => (
+          <MenuItem key={menu.name} menu={menu} isSelected={getIsSelected(menu.url)} />
         ))}
       </List>
     </Container>

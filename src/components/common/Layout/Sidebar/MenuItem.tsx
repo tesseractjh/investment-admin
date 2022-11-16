@@ -1,23 +1,33 @@
 import Link from 'next/link';
 import React from 'react';
 import styled from 'styled-components';
+import { Menu } from '../constants/menu';
+import useSidebarItem from '../hooks/useSidebarItem';
 
 type Props = {
-  url: string;
-  name: string;
-  icon: React.ReactNode;
+  menu: Menu;
   isSelected: boolean;
 };
 
-function Item({ url, name, icon, isSelected }: Props) {
+function MenuItem({ menu, isSelected }: Props) {
+  const { type, url, name, icon: Icon, useClick } = menu;
+  const handleClick = useSidebarItem(url, useClick);
+
   return (
     <Container>
-      <Link href={url} passHref>
-        <Anchor isSelected={isSelected}>
-          {icon}
+      {type === 'link' ? (
+        <Link href={url} passHref>
+          <Anchor isSelected={isSelected}>
+            <Icon />
+            <ItemName>{name}</ItemName>
+          </Anchor>
+        </Link>
+      ) : (
+        <Anchor as="button" type="button" isSelected={isSelected} onClick={handleClick}>
+          <Icon />
           <ItemName>{name}</ItemName>
         </Anchor>
-      </Link>
+      )}
     </Container>
   );
 }
@@ -28,6 +38,7 @@ const Anchor = styled.a<{ isSelected: boolean }>`
   ${({ theme }) => theme.mixin.inlineFlex('flex-start')}
   width: 100%;
   padding: 16px 24px;
+  text-align: left;
   color: ${({ theme }) => theme.color.GRAY};
 
   & > svg {
@@ -58,4 +69,4 @@ const ItemName = styled.span`
   flex: 1;
 `;
 
-export default React.memo(Item);
+export default React.memo(MenuItem);

@@ -4,5 +4,5 @@ import SIDEBAR_MENU from '../constants/menu';
 export default function useSidebar() {
   const { pathname } = useRouter();
   const getIsSelected = (url: string) => url === pathname;
-  return { getIsSelected, menu: SIDEBAR_MENU };
+  return { getIsSelected, menus: SIDEBAR_MENU };
 }
