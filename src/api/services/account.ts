@@ -17,6 +17,24 @@ export type AccountResponse = {
   is_active: boolean;
   created_at: string;
   updated_at: string;
+  user: UserResponse;
+};
+
+export type UserResponse = {
+  id: number;
+  uuid: string;
+  photo: string;
+  name: string;
+  email: string;
+  age: number;
+  gender_origin: number;
+  birth_date: string;
+  phone_number: string;
+  address: string;
+  detail_address: string;
+  last_login: string;
+  created_at: string;
+  updated_at: string;
 };
 
 const converter = (key: string) => {
@@ -32,7 +50,7 @@ const converter = (key: string) => {
 
 export const getAccounts = async (params: Record<string, unknown>) => {
   const result = await apiClient.get<AccountResponse[], ResponseData<AccountResponse[]>>(
-    `/accounts?${getQueryString(params, converter)}`
+    `/accounts?${getQueryString({ ...params, _expand: 'user' }, converter)}`
   );
   return result;
 };

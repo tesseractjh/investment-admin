@@ -15,18 +15,17 @@ export default function useAccounts(limit: number) {
 
   const isLoading = results.some(({ isLoading }) => isLoading);
   const hasError = results.some(({ data }) => data?.error);
-  const [{ data: accountsData }, { data: usersData }] = results;
+  const [{ data: accountsData }] = results;
 
-  if (!accountsData || !usersData) {
+  if (!accountsData) {
     return defaultValues;
   }
 
   const { data: accounts = [] } = accountsData;
-  const { data: users = [] } = usersData;
 
   const data = accounts.map((account) => {
     const row: Record<keyof typeof ACCOUNTS_COLUMNS, string | number> = { ...ACCOUNTS_COLUMNS };
-    row.user_name = users.find(({ id }) => id === account.user_id)?.name ?? '';
+    row.user_name = account.user.name;
     row.broker_name = BROKERS[account.broker_id];
     row.number = getFormattedAccount(account.number, BROKER_FORMAT[account.broker_id]);
     row.status = ACCOUNT_STATE[account.status];
