@@ -1,6 +1,6 @@
 export const ACCOUNTS_COLUMNS = {
   user_name: '고객명',
-  broker_name: '브로커명',
+  broker_name: '증권사',
   number: '계좌번호',
   status: '계좌상태',
   name: '계좌명',

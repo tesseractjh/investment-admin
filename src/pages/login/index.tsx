@@ -4,7 +4,7 @@ import Logo from '@components/common/Logo';
 import LoginForm from '@components/Login/LoginForm';
 import useAuth from '@hooks/useAuth';
 
-export default function Login() {
+export default function LoginPage() {
   const isAuthenticated = useAuth();
 
   if (isAuthenticated) {
