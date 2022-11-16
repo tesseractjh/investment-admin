@@ -76,6 +76,7 @@ const Modal = styled.div<{ isClosing: boolean }>`
   top: 40px;
   left: 50%;
   transform: translateX(-50%);
+  z-index: 100;
   ${({ isClosing }) => (isClosing ? 'opacity: 0;' : '')}
   padding: 20px 40px;
   border-radius: 4px;
