@@ -1,5 +1,6 @@
 import { BROKERS } from '@constants/brokers';
 import { ACCOUNT_STATE } from '@constants/accounts';
+import getQueryString from '@utils/getQueryString';
 import { apiClient } from '..';
 import type { ResponseData } from '..';
 
@@ -18,9 +19,20 @@ export type AccountResponse = {
   updated_at: string;
 };
 
-export const getAccounts = async (page: number, limit: number) => {
+const converter = (key: string) => {
+  switch (key) {
+    case 'page':
+      return '_page';
+    case 'limit':
+      return '_limit';
+    default:
+      return key;
+  }
+};
+
+export const getAccounts = async (params: Record<string, unknown>) => {
   const result = await apiClient.get<AccountResponse[], ResponseData<AccountResponse[]>>(
-    `/accounts?_page=${page}&_limit=${limit}`
+    `/accounts?${getQueryString(params, converter)}`
   );
   return result;
 };
