@@ -5,9 +5,9 @@ import LoginForm from '@components/Login/LoginForm';
 import useAuth from '@hooks/useAuth';
 
 export default function LoginPage() {
-  const isAuthenticated = useAuth();
+  const isAuthorized = useAuth();
 
-  if (isAuthenticated) {
+  if (isAuthorized) {
     return null;
   }
 

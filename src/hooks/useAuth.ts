@@ -13,7 +13,7 @@ export default function useAuth() {
   const isMounted = useMount(() => setToken(getCookie('accessToken')));
 
   const { data, isFetching } = useQuery(['auth'], API.auth.auth, {
-    enabled: !!token,
+    enabled: token !== null,
   });
 
   useEffect(() => {

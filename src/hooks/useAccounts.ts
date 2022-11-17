@@ -9,9 +9,9 @@ import useAccountsQueries from './queries/useAccountsQueries';
 
 export default function useAccounts(
   initialData: [ResponseData<AccountResponse[]>, ResponseData<AccountResponse[]>],
-  limit: number
+  initialQuery: { page: number; limit: number }
 ) {
-  const results = useAccountsQueries(initialData, limit);
+  const results = useAccountsQueries(initialData, initialQuery);
   const defaultValues = { data: [], columns: ACCOUNTS_COLUMNS, isReady: false };
 
   if (results.some((result) => !result)) {

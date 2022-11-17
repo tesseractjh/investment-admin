@@ -1,6 +1,7 @@
 import type { AppProps } from 'next/app';
 import { ThemeProvider } from 'styled-components';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { RecoilRoot } from 'recoil';
 import GlobalStyle from '@styles/GlobalStyles';
 import theme from '@styles/theme';
 import '@styles/globals.css';
@@ -27,13 +28,15 @@ export default function App({ Component, pageProps }: AppProps) {
     <ThemeProvider theme={theme}>
       <GlobalStyle />
       <QueryClientProvider client={queryClient}>
-        <ModalProvider>
-          <AxiosWrapper>
-            <Layout>
-              <Component {...pageProps} />
-            </Layout>
-          </AxiosWrapper>
-        </ModalProvider>
+        <RecoilRoot>
+          <ModalProvider>
+            <AxiosWrapper>
+              <Layout>
+                <Component {...pageProps} />
+              </Layout>
+            </AxiosWrapper>
+          </ModalProvider>
+        </RecoilRoot>
         <ReactQueryDevtools />
       </QueryClientProvider>
     </ThemeProvider>

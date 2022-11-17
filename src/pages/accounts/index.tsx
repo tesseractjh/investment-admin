@@ -6,6 +6,10 @@ import useAccounts from '@hooks/useAccounts';
 
 type Props = {
   initialData: [ResponseData<AccountResponse[]>, ResponseData<AccountResponse[]>];
+  initialQuery: {
+    page: number;
+    limit: number;
+  };
 };
 
 const columnStyles: React.ComponentProps<typeof Table>['columnStyles'] = [
@@ -20,10 +24,8 @@ const columnStyles: React.ComponentProps<typeof Table>['columnStyles'] = [
   { width: 13 },
 ];
 
-const TABLE_LIMIT = 20;
-
-export default function Accounts({ initialData }: Props) {
-  const { data, columns, isReady } = useAccounts(initialData ?? '', TABLE_LIMIT);
+export default function Accounts({ initialData, initialQuery }: Props) {
+  const { data, columns, isReady } = useAccounts(initialData, initialQuery);
 
   if (!isReady) {
     return null;
@@ -34,7 +36,7 @@ export default function Accounts({ initialData }: Props) {
       tableId="accounts"
       columns={columns}
       data={data}
-      limit={TABLE_LIMIT}
+      limit={20}
       minWidth={1500}
       maxWidth={2000}
       columnStyles={columnStyles}
@@ -64,15 +66,14 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
       redirect: {
         destination: '/login?expired=true',
       },
-      props: {
-        hi: 1234,
-      },
+      props: {},
     };
   }
 
   return {
     props: {
       initialData: results.map(({ data }) => ({ data })),
+      initialQuery: { page: Number(page), limit: Number(limit) },
     },
   };
 };

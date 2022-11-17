@@ -27,13 +27,13 @@ export default function Table<T extends Record<string, string | number>>({
   maxWidth,
   columnStyles,
 }: Props<T>) {
-  const [heads, rows] = useTable(columns, data);
+  const [heads, rows] = useTable(columns, data, tableId, limit);
 
   return (
     <Container>
       <TableMenuContainer>
         필터
-        <Pagination tableId={tableId} limit={limit} />
+        <Pagination tableId={tableId} />
       </TableMenuContainer>
       <TableWrapper>
         <StyledTable minWidth={minWidth} maxWidth={maxWidth}>

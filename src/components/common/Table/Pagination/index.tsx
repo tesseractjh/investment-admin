@@ -4,11 +4,10 @@ import usePagination from '../hooks/usePagination';
 
 type Props = {
   tableId: string;
-  limit: number;
 };
 
-export default function Pagination({ tableId, limit }: Props) {
-  const { page, isPrevDisabled, isNextDisabled, handlePrevClick, handleNextClick } = usePagination(tableId, limit);
+export default function Pagination({ tableId }: Props) {
+  const { page, isPrevDisabled, isNextDisabled, handlePrevClick, handleNextClick } = usePagination(tableId);
 
   return (
     <Container>

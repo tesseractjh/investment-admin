@@ -1,22 +1,26 @@
 import usePaginationQuery from '@hooks/queries/usePaginationQuery';
+import { useTableQueryState, useTableQueryValue } from '@hooks/table';
 import useQueryParams from '@hooks/useQueryParams';
 
-export default function usePagination(tableId: string, defaultLimit: number) {
-  const {
-    query: { page, limit },
-    setQueryParams,
-  } = useQueryParams(defaultLimit);
+export default function usePagination(tableId: string) {
+  const [page, setPage] = useTableQueryState(tableId, 'page');
+  const limit = useTableQueryValue(tableId, 'limit');
+  const setQueryParams = useQueryParams();
   const data = usePaginationQuery(tableId, page, limit);
 
   const isPrevDisabled = page === 1;
   const isNextDisabled = !data?.data?.length;
 
   const handlePrevClick = () => {
-    setQueryParams({ page: page > 1 ? page - 1 : 1, limit });
+    const nextPageValue = page > 1 ? page - 1 : 1;
+    setPage(nextPageValue);
+    setQueryParams({ page: nextPageValue, limit });
   };
 
   const handleNextClick = () => {
-    setQueryParams({ page: page + 1, limit });
+    const nextPageValue = page + 1;
+    setPage(nextPageValue);
+    setQueryParams({ page: nextPageValue, limit });
   };
 
   return { page, isPrevDisabled, isNextDisabled, handlePrevClick, handleNextClick };
