@@ -7,9 +7,10 @@ type Row = {
   datas: (string | number)[];
 };
 
-export default function useTable<T extends Record<string, string | number>>(
+export default function useTable<T extends Record<string, unknown>>(
   columns: Record<string, string>,
   data: T[],
+  dataConverter: (data: T[]) => Record<string, string | number>[],
   tableId: string,
   limit: number
 ) {
@@ -17,7 +18,7 @@ export default function useTable<T extends Record<string, string | number>>(
   const router = useRouter();
 
   const heads = Object.values(columns);
-  const rows: Row[] = data.map((row, index) => ({
+  const rows: Row[] = dataConverter(data).map((row, index) => ({
     id: index,
     datas: Object.keys(columns).reduce<(string | number)[]>((acc, column) => {
       acc.push(row[column]);

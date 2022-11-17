@@ -25,7 +25,7 @@ const columnStyles: React.ComponentProps<typeof Table>['columnStyles'] = [
 ];
 
 export default function Accounts({ initialData, initialQuery }: Props) {
-  const { data, columns, isReady } = useAccounts(initialData, initialQuery);
+  const { data, dataConverter, columns, isReady } = useAccounts(initialData, initialQuery);
 
   if (!isReady) {
     return null;
@@ -36,6 +36,7 @@ export default function Accounts({ initialData, initialQuery }: Props) {
       tableId="accounts"
       columns={columns}
       data={data}
+      dataConverter={dataConverter}
       limit={20}
       minWidth={1500}
       maxWidth={2000}

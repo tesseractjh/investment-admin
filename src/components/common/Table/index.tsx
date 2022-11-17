@@ -12,22 +12,24 @@ type Props<T> = {
   tableId: string;
   columns: Record<string, string>;
   data: T[];
+  dataConverter: (data: T[]) => Record<string, string | number>[];
   limit: number;
   minWidth?: number;
   maxWidth?: number;
   columnStyles?: ColumnStyle[];
 };
 
-export default function Table<T extends Record<string, string | number>>({
+export default function Table<T extends Record<string, unknown>>({
   tableId,
   columns,
   data,
+  dataConverter,
   limit,
   minWidth,
   maxWidth,
   columnStyles,
 }: Props<T>) {
-  const [heads, rows] = useTable(columns, data, tableId, limit);
+  const [heads, rows] = useTable(columns, data, dataConverter, tableId, limit);
 
   return (
     <Container>

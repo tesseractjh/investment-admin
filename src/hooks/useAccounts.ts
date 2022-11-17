@@ -7,28 +7,8 @@ import type { ResponseData } from '@api/index';
 import type { AccountResponse } from '@api/services/account';
 import useAccountsQueries from './queries/useAccountsQueries';
 
-export default function useAccounts(
-  initialData: [ResponseData<AccountResponse[]>, ResponseData<AccountResponse[]>],
-  initialQuery: { page: number; limit: number }
-) {
-  const results = useAccountsQueries(initialData, initialQuery);
-  const defaultValues = { data: [], columns: ACCOUNTS_COLUMNS, isReady: false };
-
-  if (results.some((result) => !result)) {
-    return defaultValues;
-  }
-
-  const isLoading = results.some(({ isLoading }) => isLoading);
-  const hasError = results.some(({ data }) => data?.error);
-  const [{ data: accountsData }] = results;
-
-  if (!accountsData) {
-    return defaultValues;
-  }
-
-  const { data: accounts = [] } = accountsData;
-
-  const data = accounts.map((account) => {
+const dataConverter = (accounts: AccountResponse[]) =>
+  accounts.map((account) => {
     const row: Record<keyof typeof ACCOUNTS_COLUMNS, string | number> = { ...ACCOUNTS_COLUMNS };
     row.user_name = account.user.name;
     row.broker_name = BROKERS[account.broker_id];
@@ -42,8 +22,36 @@ export default function useAccounts(
     return row;
   });
 
+export default function useAccounts(
+  initialData: [ResponseData<AccountResponse[]>, ResponseData<AccountResponse[]>],
+  initialQuery: { page: number; limit: number }
+) {
+  const results = useAccountsQueries(initialData, initialQuery);
+
+  const defaultValues: {
+    data: AccountResponse[];
+    dataConverter: (data: AccountResponse[]) => Record<string, string | number>[];
+    columns: typeof ACCOUNTS_COLUMNS;
+    isReady: boolean;
+  } = { data: [], dataConverter, columns: ACCOUNTS_COLUMNS, isReady: false };
+
+  if (results.some((result) => !result)) {
+    return defaultValues;
+  }
+
+  const isLoading = results.some(({ isLoading }) => isLoading);
+  const hasError = results.some(({ data }) => data?.error);
+  const [{ data: accountsData }] = results;
+
+  if (!accountsData) {
+    return defaultValues;
+  }
+
+  const { data = [] } = accountsData;
+
   return {
     data,
+    dataConverter,
     columns: ACCOUNTS_COLUMNS,
     isReady: !isLoading && !hasError,
   };
