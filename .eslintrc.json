@@ -14,6 +14,7 @@
   },
   "extends": ["airbnb", "plugin:import/recommended", "plugin:@typescript-eslint/recommended", "prettier"],
   "rules": {
+    "camelcase": "off",
     "comma-dangle": "off", // trailing comma 생략 가능
     "consistent-return": "off", // 함수에 return문 생략 가능
     "func-names": "off", // 익명 함수 사용 가능

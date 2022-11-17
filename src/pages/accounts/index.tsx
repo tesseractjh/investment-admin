@@ -6,10 +6,7 @@ import useAccounts from '@hooks/useAccounts';
 
 type Props = {
   initialData: [ResponseData<AccountResponse[]>, ResponseData<AccountResponse[]>];
-  initialQuery: {
-    page: number;
-    limit: number;
-  };
+  initialQuery: Record<string, string>;
 };
 
 const columnStyles: React.ComponentProps<typeof Table>['columnStyles'] = [
@@ -25,7 +22,7 @@ const columnStyles: React.ComponentProps<typeof Table>['columnStyles'] = [
 ];
 
 export default function Accounts({ initialData, initialQuery }: Props) {
-  const { data, dataConverter, columns, isReady } = useAccounts(initialData, initialQuery);
+  const { data, dataConverter, filters, columns, isReady } = useAccounts(initialData, initialQuery);
 
   if (!isReady) {
     return null;
@@ -37,6 +34,7 @@ export default function Accounts({ initialData, initialQuery }: Props) {
       columns={columns}
       data={data}
       dataConverter={dataConverter}
+      filters={filters}
       limit={20}
       minWidth={1500}
       maxWidth={2000}
@@ -47,7 +45,7 @@ export default function Accounts({ initialData, initialQuery }: Props) {
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const { accessToken } = ctx.req.cookies;
-  const { page = 1, limit = 20 } = ctx.query;
+  const { page = '1', limit = '20', ...restQuery } = ctx.query;
 
   serverAPI.interceptors.request.use((config) => {
     if (config.headers) {
@@ -57,8 +55,8 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
   });
 
   const results = await Promise.all([
-    API.account.getAccounts({ page, limit }),
-    API.account.getAccounts({ page: Number(page) + 1, limit }),
+    API.account.getAccounts({ page: String(page), limit: String(limit), ...restQuery }),
+    API.account.getAccounts({ page: String(Number(page) + 1), limit: String(limit), ...restQuery }),
   ]);
 
   if (results.some(({ error }) => error?.status === 401)) {
@@ -74,7 +72,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
   return {
     props: {
       initialData: results.map(({ data }) => ({ data })),
-      initialQuery: { page: Number(page), limit: Number(limit) },
+      initialQuery: { page: String(page), limit: String(limit), ...restQuery },
     },
   };
 };

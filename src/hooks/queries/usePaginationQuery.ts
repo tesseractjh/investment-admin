@@ -2,10 +2,10 @@ import API from '@api/index';
 import { ACCOUNTS_QUERY_OPTIONS } from '@constants/queryOptions';
 import { useQuery } from '@tanstack/react-query';
 
-export default function usePaginationQuery(tableId: string, page: number, limit: number) {
+export default function usePaginationQuery(tableId: string, params: Record<string, string>) {
   const { data } = useQuery(
-    [tableId, { page: page + 1, limit }],
-    () => API.account.getAccounts({ page: page + 1, limit }),
+    [tableId, { ...params, page: String(Number(params.page) + 1) }],
+    () => API.account.getAccounts({ ...params, page: String(Number(params.page) + 1) }),
     ACCOUNTS_QUERY_OPTIONS
   );
   return data;

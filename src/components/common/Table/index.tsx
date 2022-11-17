@@ -2,6 +2,8 @@ import theme from '@styles/theme';
 import styled from 'styled-components';
 import Pagination from './Pagination';
 import useTable from './hooks/useTable';
+import type { TableFilter } from './Filter';
+import Filter from './Filter';
 
 type ColumnStyle = {
   width?: number;
@@ -13,6 +15,7 @@ type Props<T> = {
   columns: Record<string, string>;
   data: T[];
   dataConverter: (data: T[]) => Record<string, string | number>[];
+  filters: TableFilter[];
   limit: number;
   minWidth?: number;
   maxWidth?: number;
@@ -24,6 +27,7 @@ export default function Table<T extends Record<string, unknown>>({
   columns,
   data,
   dataConverter,
+  filters,
   limit,
   minWidth,
   maxWidth,
@@ -34,7 +38,7 @@ export default function Table<T extends Record<string, unknown>>({
   return (
     <Container>
       <TableMenuContainer>
-        필터
+        <Filter tableId={tableId} filters={filters} />
         <Pagination tableId={tableId} />
       </TableMenuContainer>
       <TableWrapper>

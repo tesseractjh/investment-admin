@@ -5,6 +5,7 @@ import getFormattedDate from '@utils/getFormattedDate';
 import { BROKERS, BROKER_FORMAT } from '@constants/brokers';
 import type { ResponseData } from '@api/index';
 import type { AccountResponse } from '@api/services/account';
+import type { TableFilter } from '@components/common/Table/Filter';
 import useAccountsQueries from './queries/useAccountsQueries';
 
 const dataConverter = (accounts: AccountResponse[]) =>
@@ -22,18 +23,40 @@ const dataConverter = (accounts: AccountResponse[]) =>
     return row;
   });
 
+const filters: TableFilter[] = [
+  {
+    id: 'broker_id',
+    label: '증권사',
+    options: Object.entries(BROKERS).map(([key, value]) => ({ option: value, value: key })),
+  },
+  {
+    id: 'status',
+    label: '계좌상태',
+    options: Object.entries(ACCOUNT_STATE).map(([key, value]) => ({ option: value, value: key })),
+  },
+  {
+    id: 'is_active',
+    label: '계좌활성화여부',
+    options: [
+      { option: '활성', value: true },
+      { option: '비활성', value: false },
+    ],
+  },
+];
+
 export default function useAccounts(
   initialData: [ResponseData<AccountResponse[]>, ResponseData<AccountResponse[]>],
-  initialQuery: { page: number; limit: number }
+  initialQuery: Record<string, string>
 ) {
   const results = useAccountsQueries(initialData, initialQuery);
 
   const defaultValues: {
     data: AccountResponse[];
     dataConverter: (data: AccountResponse[]) => Record<string, string | number>[];
+    filters: TableFilter[];
     columns: typeof ACCOUNTS_COLUMNS;
     isReady: boolean;
-  } = { data: [], dataConverter, columns: ACCOUNTS_COLUMNS, isReady: false };
+  } = { data: [], dataConverter, filters, columns: ACCOUNTS_COLUMNS, isReady: false };
 
   if (results.some((result) => !result)) {
     return defaultValues;
@@ -52,6 +75,7 @@ export default function useAccounts(
   return {
     data,
     dataConverter,
+    filters,
     columns: ACCOUNTS_COLUMNS,
     isReady: !isLoading && !hasError,
   };

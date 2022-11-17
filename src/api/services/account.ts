@@ -43,12 +43,16 @@ const converter = (key: string) => {
       return '_page';
     case 'limit':
       return '_limit';
+    case 'brokerId':
+      return 'broker_id';
+    case 'isActive':
+      return 'is_active';
     default:
       return key;
   }
 };
 
-export const getAccounts = async (params: Record<string, unknown>) => {
+export const getAccounts = async (params: Record<string, string>) => {
   const result = await getAPI().get<AccountResponse[], ResponseData<AccountResponse[]>>(
     `/accounts?${getQueryString({ ...params, _expand: 'user' }, converter)}`
   );

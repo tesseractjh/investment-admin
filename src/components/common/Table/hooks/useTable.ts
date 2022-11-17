@@ -1,6 +1,8 @@
 import { useEffect } from 'react';
 import { useSetTableQuery } from '@hooks/table';
 import { useRouter } from 'next/router';
+import { useRecoilCallback } from 'recoil';
+import { tableState } from '@recoil/table';
 
 type Row = {
   id: number;
@@ -14,6 +16,7 @@ export default function useTable<T extends Record<string, unknown>>(
   tableId: string,
   limit: number
 ) {
+  const setPage = useSetTableQuery(tableId, 'page');
   const setLimit = useSetTableQuery(tableId, 'limit');
   const router = useRouter();
 
@@ -26,11 +29,21 @@ export default function useTable<T extends Record<string, unknown>>(
     }, []),
   }));
 
+  const initiateTableQueryState = useRecoilCallback(({ set }) => async (queries: [string, unknown][]) => {
+    queries.forEach(([key, value]) => {
+      set(tableState([tableId, key]), String(value));
+    });
+  });
+
   useEffect(() => {
-    const { limit: _limit } = router.query;
-    if (!_limit) {
-      setLimit(limit);
+    const { page, limit: _limit } = router.query;
+    if (!page) {
+      setPage(String(page));
     }
+    if (!_limit) {
+      setLimit(String(limit));
+    }
+    initiateTableQueryState(Object.entries(router.query));
   }, [router.query]);
 
   return [heads, rows] as const;
