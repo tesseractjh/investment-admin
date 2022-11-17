@@ -9,6 +9,8 @@ type Props = {
   initialQuery: Record<string, string>;
 };
 
+const DEFAULT_LIMIT = '20';
+
 const columnStyles: React.ComponentProps<typeof Table>['columnStyles'] = [
   { width: 11, color: 'SECONDARY' },
   { width: 10 },
@@ -35,7 +37,7 @@ export default function Accounts({ initialData, initialQuery }: Props) {
       data={data}
       dataConverter={dataConverter}
       filters={filters}
-      limit={20}
+      limit={DEFAULT_LIMIT}
       minWidth={1500}
       maxWidth={2000}
       columnStyles={columnStyles}
@@ -45,7 +47,7 @@ export default function Accounts({ initialData, initialQuery }: Props) {
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const { accessToken } = ctx.req.cookies;
-  const { page = '1', limit = '20', ...restQuery } = ctx.query;
+  const { page = '1', limit = DEFAULT_LIMIT, ...restQuery } = ctx.query;
 
   serverAPI.interceptors.request.use((config) => {
     if (config.headers) {

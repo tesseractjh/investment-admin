@@ -16,7 +16,7 @@ type Props<T> = {
   data: T[];
   dataConverter: (data: T[]) => Record<string, string | number>[];
   filters: TableFilter[];
-  limit: number;
+  limit: string;
   minWidth?: number;
   maxWidth?: number;
   columnStyles?: ColumnStyle[];
